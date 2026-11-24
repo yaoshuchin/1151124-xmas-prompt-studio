@@ -204,14 +204,37 @@ html_template = f'''<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-    /* ==================== THEME SYSTEM (淺 / 深 / 綠 / 藍) ==================== */
-    :root {{
-      --font-scale: 16px;
+    /* ==================== FONT SIZE SYSTEM (中 / 大 / 特大) ==================== */
+    html {{
+      font-size: 18px !important;
+      transition: font-size 0.2s ease;
     }}
-    html.font-md {{ --font-scale: 16px; }}
-    html.font-lg {{ --font-scale: 18.5px; }}
-    html.font-xl {{ --font-scale: 21px; }}
+    html.font-md {{
+      font-size: 18px !important;
+    }}
+    html.font-lg {{
+      font-size: 21.5px !important;
+    }}
+    html.font-xl {{
+      font-size: 25.5px !important;
+    }}
 
+    /* Paragraphs and list items in chapter content */
+    html.font-md .chapter-content p, html.font-md .chapter-content li {{ font-size: 1.05rem; line-height: 1.8; }}
+    html.font-lg .chapter-content p, html.font-lg .chapter-content li {{ font-size: 1.25rem; line-height: 1.85; }}
+    html.font-xl .chapter-content p, html.font-xl .chapter-content li {{ font-size: 1.48rem; line-height: 1.9; }}
+
+    /* Code blocks, pre and mono elements */
+    html.font-md pre, html.font-md .font-mono {{ font-size: 0.95rem; }}
+    html.font-lg pre, html.font-lg .font-mono {{ font-size: 1.15rem; }}
+    html.font-xl pre, html.font-xl .font-mono {{ font-size: 1.35rem; }}
+
+    /* Select dropdowns and input fields */
+    html.font-md select, html.font-md input {{ font-size: 1rem; }}
+    html.font-lg select, html.font-lg input {{ font-size: 1.18rem; padding-top: 0.55rem; padding-bottom: 0.55rem; }}
+    html.font-xl select, html.font-xl input {{ font-size: 1.38rem; padding-top: 0.7rem; padding-bottom: 0.7rem; }}
+
+    /* ==================== THEME SYSTEM (淺 / 深 / 綠 / 藍) ==================== */
     /* 1. DARK THEME (深 - 預設黑曜夜空) */
     html.theme-dark {{
       --bg-body: #070A12;
@@ -1245,19 +1268,22 @@ html_template = f'''<!DOCTYPE html>
     const EFFECTS_DATA = {effects_json_str};
     const FULL_PROMPT_TEXT = {escaped_full_markdown};
 
-    // Font Size Controller (中 md / 大 lg / 特大 xl)
+    // Font Size Controller (中 md: 18px / 大 lg: 21.5px / 特大 xl: 25.5px)
     function setFontSize(sizeKey) {{
       const htmlEl = document.documentElement;
       htmlEl.classList.remove('font-md', 'font-lg', 'font-xl');
       htmlEl.classList.add('font-' + sizeKey);
+      
+      const pxSize = sizeKey === 'md' ? '18px' : sizeKey === 'lg' ? '21.5px' : '25.5px';
+      htmlEl.style.fontSize = pxSize;
       
       document.querySelectorAll('#btn-font-md, #btn-font-lg, #btn-font-xl').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById('btn-font-' + sizeKey);
       if (activeBtn) activeBtn.classList.add('active');
       
       localStorage.setItem('xmas_font_size', sizeKey);
-      playChime(1000, 'sine', 0.1);
-      showToast('已切換字型：' + (sizeKey === 'md' ? '中' : sizeKey === 'lg' ? '大' : '特大'));
+      playChime(sizeKey === 'md' ? 880 : sizeKey === 'lg' ? 1100 : 1320, 'sine', 0.1);
+      showToast('已切換字型：' + (sizeKey === 'md' ? '中 (18px)' : sizeKey === 'lg' ? '大 (21.5px)' : '特大 (25.5px)'));
     }}
 
     // Theme Color Controller (淺 light / 深 dark / 綠 green / 藍 blue)
